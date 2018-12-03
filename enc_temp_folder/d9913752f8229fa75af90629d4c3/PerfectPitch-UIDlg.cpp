@@ -360,6 +360,8 @@ void CPerfectPitchUIDlg::OnBnClickedBtnBin()
 	CString strTmp = _T("Binarization done");
 	AfxMessageBox(strTmp);
 
+	cv::imwrite("tempresult.png", image);
+
 	if (NULL != m_PictureImage)
 	{
 		m_PictureImage.Destroy();
