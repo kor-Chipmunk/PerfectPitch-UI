@@ -357,55 +357,67 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 
 void CPerfectPitchUIDlg::OnBnClickedBtnBin()
 {
-	// 이진화 버튼 클릭시
-	Pretreatment::Binarization(image, 200);
-	CString strTmp = _T("Binarization done");
-	AfxMessageBox(strTmp);
+	AfxBeginThread(MyThreadBin, this);
+}
 
-	if (NULL != m_PictureImage)
+UINT MyThreadBin(LPVOID pParam) {
+	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
+
+	// 이진화 버튼 클릭시
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 중... )");
+	Pretreatment::Binarization(image, 200);
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 완료 )");
+
+	if (NULL != dialog->m_PictureImage)
 	{
-		m_PictureImage.Destroy();
+		dialog->m_PictureImage.Destroy();
 		// 안해주면 기존의 이미지가 지워지지 않음
-		Invalidate();
-		UpdateWindow();
+		dialog->Invalidate();
+		dialog->UpdateWindow();
 	}
 
-	return;
-	
-
-
+	return 0;
 }
+
 void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 {
 	// 오선 검출
+	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 중... )");
 	Pretreatment::DetectLine(image, lineArr);
-	CString strTmp = _T("Detection done");
-	AfxMessageBox(strTmp);
-	return;
-	
+	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 완료 )");	
 }
 
 void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
 {
 	// 오선 픽셀 정리.
+	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리하는 중... )");
 	Pretreatment::RemoveDup(lineArr);
-	CString strTmp = _T("Removing Duplicates done");
-	AfxMessageBox(strTmp);
+	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리 완료 )");
 	return;
 }
 
 
 void CPerfectPitchUIDlg::OnBnClickedBtnCut()
 {
+	AfxBeginThread(MyThreadCut, this);
+}
+
+UINT MyThreadCut(LPVOID pParam) {
 	//악보 자르기
-	
+	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
+
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... )");
 	while (!EoI)
 	{
 		linearScore temp0(image, lineArr, EoI);
 		LinScores.push_back(temp0);
 		NumofLinears++;
+
+		char* text = new char[100];
+		sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... %d개 완료 )", NumofLinears);
+		SetWindowText(dialog->m_hWnd, text);
 	}
-	
+
 	for (int i = 0; i < NumofLinears; i++)
 	{
 		lines5[i] = new int*[2];
@@ -424,8 +436,10 @@ void CPerfectPitchUIDlg::OnBnClickedBtnCut()
 		else k = 1;
 		lines5[i][k][j] = lineArr[n];
 	}
-	CString strTmp = _T("악보자르기 완료");
-	AfxMessageBox(strTmp);
+
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르기 완료 )");
+
+	/*
 	for (int i = NumofLinears - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < 2; j++)
@@ -437,51 +451,67 @@ void CPerfectPitchUIDlg::OnBnClickedBtnCut()
 			cv::imshow(str, LinScores[i].oneline[j]);
 		}
 	}
-	return;
-
+	*/
+	return 0;
 }
 
 
 void CPerfectPitchUIDlg::OnBnClickedBtnDetnote()
 {
+	AfxBeginThread(MyThreadDetnote, this);
+}
+
+UINT MyThreadDetnote(LPVOID pParam) {
+	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
+
 	Midi::AllChannelSoundOff(m_DevHandle);
 	Midi::SendShortMsg(m_DevHandle, 0xB0, 7, 127);
 
-	cout << "악보 처리 시작" << endl;
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 중... )");
 	for (int i = 0; i < NumofLinears; i++)
 	{
 		for (int RL = 0; RL < 2; RL++)
 		{
+			char* text = new char[100];
+			sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 중... %d번 악보 / %d개 )", i * 2 + RL + 1, NumofLinears * 2);
+			SetWindowText(dialog->m_hWnd, text);
 			ScoreProcessor myProc(LinScores[i].oneline[RL], &myMusic, lines5[i][RL], RL);
+			/*
 			if (RL == 0)
 				cout << "\n" << i + 1 << "번째 오른손 라인 탐색 시작" << endl;
 			else
 				cout << "\n" << i + 1 << "번째 왼손 라인 탐색 시작" << endl;
+			*/
 			myProc.DetectNote();
 		}
 	}
-	CString strTmp = _T("악보 처리 끝남");
-	AfxMessageBox(strTmp);
-	return;
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 완료 )");
+	return 0;
 }
-
 
 void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
 {
+	AfxBeginThread(MyThreadProc, this);
+}
 
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+UINT MyThreadProc(LPVOID pParam) {
+	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
+
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 연주 중... )");
 	myMusic.setTempo(75); //디폴트는 150, 버튼으로 템포 지정 가능하면 좋음. 75하면 두배빨라짐
 	myMusic.setVolume_R(100);
 	myMusic.setVolume_L(0);
 	myMusic.PlayMusic();
+	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 연주  완료 )");
 
-
+	return 0;
 }
 
 
 void CPerfectPitchUIDlg::OnBnClickedBtnStop()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 악보 재생 멈춤 )");
 	myMusic.setVolume_L(0);
-	myMusic.setVolume_L(0);
+	myMusic.setVolume_R(0);
 }

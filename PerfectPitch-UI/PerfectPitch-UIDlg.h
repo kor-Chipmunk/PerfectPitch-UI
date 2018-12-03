@@ -57,3 +57,11 @@ public:
 	afx_msg void OnBnClickedBtnPlay();
 	afx_msg void OnBnClickedBtnStop();
 };
+
+UINT MyThreadBin(LPVOID pParam);
+
+UINT MyThreadCut(LPVOID pParam);
+
+UINT MyThreadDetnote(LPVOID pParam);
+
+UINT MyThreadProc(LPVOID pParam);
