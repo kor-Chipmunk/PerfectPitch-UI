@@ -538,19 +538,48 @@ UINT MyThreadCut(LPVOID pParam) {
 
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르기 완료 )");
 
-	/*
-	for (int i = NumofLinears - 1; i >= 0; i--)
+	
+	Mat result = LinScores[0].oneline[0];
+	for (int i = 0; i < NumofLinears; i++)
 	{
 		for (int j = 0; j < 2; j++)
-		{
-			ostringstream o;
-			o << 2 * i + j;
-			string str = o.str();
-			cv::namedWindow(str, CV_WINDOW_AUTOSIZE);
-			cv::imshow(str, LinScores[i].oneline[j]);
+		{	
+			if (i == 0 && j == 0) continue;
+			cv::vconcat(result, LinScores[i].oneline[j], result);
 		}
 	}
-	*/
+
+	dialog->SaveImage(result, "tempresult.png");
+	
+	if (NULL != dialog->m_PictureImage)
+	{
+		dialog->m_PictureImage.Destroy();
+		// 안해주면 기존의 이미지가 지워지지 않음
+		dialog->Invalidate();
+		dialog->UpdateWindow();
+
+		HRESULT hResult = dialog->m_PictureImage.Load("tempresult.png");
+
+		if (FAILED(hResult)) {
+			return 0;
+		}
+
+
+		if (dialog->ScoreImage.GetBitmap() == NULL)
+		{
+			dialog->SetPNGAlpha(dialog->m_PictureImage, "tempresult.png");
+
+			//정상적으로 띄워짐
+			CRect StaticPictureRect;
+			dialog->ScoreImage.GetClientRect(StaticPictureRect);
+			dialog->SetPNGReSizeRatioDrawCenter(dialog->ScoreImage.GetDC()->m_hDC, dialog->m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeRatioDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+
+		}
+
+	}
+
 	return 0;
 }
 
