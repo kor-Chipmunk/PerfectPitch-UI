@@ -30,13 +30,15 @@ using namespace std;
 
 int linearScore::index = 0;
 
-/*
-HMIDIOUT     m_DevHandle;
+
+HMIDIOUT     m_DevHandle=Midi::Open(0);
 MMRESULT     m_MMErrCode;
 MIDIOUTCAPS  m_NowMidiOutCaps;
+
+
+
 Score myMusic(m_DevHandle, 150);
 
-*/
 
 bool EoI = false;
 cv::Mat image;
@@ -440,51 +442,11 @@ void CPerfectPitchUIDlg::OnBnClickedBtnCut()
 }
 
 
-
-
-
-
 void CPerfectPitchUIDlg::OnBnClickedBtnDetnote()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	/*
-	
-	cout << "악보 처리 시작" << endl;
-	for (int i = 0; i < NumofLinears; i++)
-	{
-		for (int RL = 0; RL < 2; RL++)
-		{
-			ScoreProcessor myProc(LinScores[i].oneline[RL], &myMusic, lines5[i][RL], RL);
-			if (RL == 0)
-				cout << "\n" << i + 1 << "번째 오른손 라인 탐색 시작" << endl;
-			else
-				cout << "\n" << i + 1 << "번째 왼손 라인 탐색 시작" << endl;
-			myProc.DetectNote();
-		}
-	}*/
-	CString strTmp = _T("악보 처리 끝남");
-	AfxMessageBox(strTmp);
-	return;
-}
-
-
-void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
-{
-	HMIDIOUT     m_DevHandle;
-	MMRESULT     m_MMErrCode;
-	MIDIOUTCAPS  m_NowMidiOutCaps;
-
-	m_DevHandle = Midi::Open(0);
-
-
 	Midi::AllChannelSoundOff(m_DevHandle);
 	Midi::SendShortMsg(m_DevHandle, 0xB0, 7, 127);
 
-	Score myMusic(m_DevHandle, 150);
-
-	cout << "미디 생성 및 설정 완료" << endl;
-
-	
 	cout << "악보 처리 시작" << endl;
 	for (int i = 0; i < NumofLinears; i++)
 	{
@@ -498,8 +460,14 @@ void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
 			myProc.DetectNote();
 		}
 	}
-	
+	CString strTmp = _T("악보 처리 끝남");
+	AfxMessageBox(strTmp);
+	return;
+}
 
+
+void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
+{
 
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	myMusic.setTempo(75); //디폴트는 150, 버튼으로 템포 지정 가능하면 좋음. 75하면 두배빨라짐
@@ -514,6 +482,6 @@ void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
 void CPerfectPitchUIDlg::OnBnClickedBtnStop()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	//myMusic.setVolume_L(0);
-	//myMusic.setVolume_L(0);
+	myMusic.setVolume_L(0);
+	myMusic.setVolume_L(0);
 }
