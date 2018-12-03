@@ -3,7 +3,19 @@
 //
 
 #pragma once
+#include<opencv2/opencv.hpp>
+#include<iostream>
+#include<stdlib.h>
+#include<vector>
+#include"Pretreatment.h"
+#include"Midi.h"
+#include"Score.h"
+#include"ScoreProcessor.h"
+#include"linearScore.h"
+#include<sstream>
 
+using namespace std;
+using namespace cv;
 
 // CPerfectPitchUIDlg 대화 상자
 class CPerfectPitchUIDlg : public CDialogEx
@@ -19,7 +31,13 @@ public:
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
-
+public:
+	void SaveImage(Mat targetMat, CString filePath);
+	bool SetPNGAlpha(CImage& _PictureImage, CString _FileName);
+	bool SetPNGReSizeDraw(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
+	bool SetPNGReSizeRatioDraw(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
+	bool SetPNGReSizeRatioDrawCenter(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
+	CRect GetReSizeRatioRect(CRect _OriginRect, CRect _PrototypeRect);
 
 // 구현입니다.
 protected:
@@ -31,12 +49,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-
-	bool SetPNGAlpha(CImage& _PictureImage, CString _FileName);
-	bool SetPNGReSizeDraw(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
-	bool SetPNGReSizeRatioDraw(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
-	bool SetPNGReSizeRatioDrawCenter(HDC _Hdc, CImage& _PictureImage, CRect _Rect);
-	CRect GetReSizeRatioRect(CRect _OriginRect, CRect _PrototypeRect);
 
 public:
 	CImage m_PictureImage;

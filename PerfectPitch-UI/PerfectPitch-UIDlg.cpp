@@ -13,20 +13,9 @@
 
 #include "stdafx.h"
 
-#include<opencv2/opencv.hpp>
-#include<iostream>
-#include<stdlib.h>
-#include<vector>
-#include"Pretreatment.h"
-#include"Midi.h"
-#include"Score.h"
-#include"ScoreProcessor.h"
-#include"linearScore.h"
-#include<sstream>
-
 #pragma comment(lib,"winmm.lib")
 
-using namespace std;
+
 
 int linearScore::index = 0;
 
@@ -298,8 +287,8 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 	CString strPathName;
 	CString strFileName;
 
-	char szFilter[] = "*.*||";
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, 0, 0, 0, 1);
+	char szFilter[] = "Image (*.BMP, *.GIF, *.JPG, *.PNG) | *.BMP;*.GIF;*.JPG;*.PNG;*.bmp;*.gif;*.jpg;*.png | All Files(*.*)|*.*||";
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter, 0, 0, 1);
 
 	if (IDOK == dlg.DoModal())
 	{
@@ -354,6 +343,25 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 
 }
 
+void CPerfectPitchUIDlg::SaveImage(Mat targetMat, CString filePath)
+{
+	IplImage* targetIplImage = new IplImage(targetMat);
+	if (targetIplImage != nullptr) {
+		IplImage *tempImage = nullptr;
+
+		if (targetIplImage->nChannels == 1)
+		{
+			tempImage = cvCreateImage(cvSize(targetIplImage->width, targetIplImage->height), IPL_DEPTH_8U, 3);
+			cvCvtColor(targetIplImage, tempImage, CV_GRAY2BGR);
+		}
+		else if (targetIplImage->nChannels == 3)
+		{
+			tempImage = cvCloneImage(targetIplImage);
+		}
+
+		cvSaveImage(filePath, tempImage);
+	}
+}
 
 void CPerfectPitchUIDlg::OnBnClickedBtnBin()
 {
@@ -366,6 +374,7 @@ UINT MyThreadBin(LPVOID pParam) {
 	// 이진화 버튼 클릭시
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 중... )");
 	Pretreatment::Binarization(image, 200);
+	dialog->SaveImage(image, "tempresult.png");
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 완료 )");
 
 	if (NULL != dialog->m_PictureImage)
@@ -374,6 +383,27 @@ UINT MyThreadBin(LPVOID pParam) {
 		// 안해주면 기존의 이미지가 지워지지 않음
 		dialog->Invalidate();
 		dialog->UpdateWindow();
+
+		HRESULT hResult = dialog->m_PictureImage.Load("tempresult.png");
+
+		if (FAILED(hResult)) {
+			return 0;
+		}
+
+
+		if (dialog->ScoreImage.GetBitmap() == NULL)
+		{
+			dialog->SetPNGAlpha(dialog->m_PictureImage, "tempresult.png");
+
+			//정상적으로 띄워짐
+			CRect StaticPictureRect;
+			dialog->ScoreImage.GetClientRect(StaticPictureRect);
+			dialog->SetPNGReSizeRatioDrawCenter(dialog->ScoreImage.GetDC()->m_hDC, dialog->m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeRatioDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+
+		}
+
 	}
 
 	return 0;
@@ -385,6 +415,36 @@ void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 중... )");
 	Pretreatment::DetectLine(image, lineArr);
 	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 완료 )");	
+	SaveImage(image, "tempresult.png");
+
+	if (NULL != m_PictureImage)
+	{
+		m_PictureImage.Destroy();
+		// 안해주면 기존의 이미지가 지워지지 않음
+		Invalidate();
+		UpdateWindow();
+
+		HRESULT hResult = m_PictureImage.Load("tempresult.png");
+
+		if (FAILED(hResult)) {
+			return;
+		}
+
+
+		if (ScoreImage.GetBitmap() == NULL)
+		{
+			SetPNGAlpha(m_PictureImage, "tempresult.png");
+
+			//정상적으로 띄워짐
+			CRect StaticPictureRect;
+			ScoreImage.GetClientRect(StaticPictureRect);
+			SetPNGReSizeRatioDrawCenter(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeRatioDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+
+		}
+
+	}
 }
 
 void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
@@ -393,6 +453,36 @@ void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
 	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리하는 중... )");
 	Pretreatment::RemoveDup(lineArr);
 	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리 완료 )");
+	SaveImage(image, "tempresult.png");
+
+	if (NULL != m_PictureImage)
+	{
+		m_PictureImage.Destroy();
+		// 안해주면 기존의 이미지가 지워지지 않음
+		Invalidate();
+		UpdateWindow();
+
+		HRESULT hResult = m_PictureImage.Load("tempresult.png");
+
+		if (FAILED(hResult)) {
+			return;
+		}
+
+
+		if (ScoreImage.GetBitmap() == NULL)
+		{
+			SetPNGAlpha(m_PictureImage, "tempresult.png");
+
+			//정상적으로 띄워짐
+			CRect StaticPictureRect;
+			ScoreImage.GetClientRect(StaticPictureRect);
+			SetPNGReSizeRatioDrawCenter(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeRatioDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+
+		}
+
+	}
 	return;
 }
 
@@ -486,6 +576,37 @@ UINT MyThreadDetnote(LPVOID pParam) {
 		}
 	}
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 완료 )");
+	dialog->SaveImage(image, "tempresult.png");
+
+	if (NULL != dialog->m_PictureImage)
+	{
+		dialog->m_PictureImage.Destroy();
+		// 안해주면 기존의 이미지가 지워지지 않음
+		dialog->Invalidate();
+		dialog->UpdateWindow();
+
+		HRESULT hResult = dialog->m_PictureImage.Load("tempresult.png");
+
+		if (FAILED(hResult)) {
+			return 0;
+		}
+
+
+		if (dialog->ScoreImage.GetBitmap() == NULL)
+		{
+			dialog->SetPNGAlpha(dialog->m_PictureImage, "tempresult.png");
+
+			//정상적으로 띄워짐
+			CRect StaticPictureRect;
+			dialog->ScoreImage.GetClientRect(StaticPictureRect);
+			dialog->SetPNGReSizeRatioDrawCenter(dialog->ScoreImage.GetDC()->m_hDC, dialog->m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeRatioDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
+
+		}
+
+	}
+
 	return 0;
 }
 
