@@ -525,6 +525,15 @@ UINT MyThreadCut(LPVOID pParam) {
 			k = 0;
 		else k = 1;
 		lines5[i][k][j] = lineArr[n];
+
+		char* text = new char[100];
+		if (k == 0) {
+			sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... %d번 보표의 오른손 멜로디 )", i);
+		}
+		else {
+			sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... %d번 보표의 왼손 멜로디 )", i);
+		}
+		SetWindowText(dialog->m_hWnd, text);
 	}
 
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르기 완료 )");
