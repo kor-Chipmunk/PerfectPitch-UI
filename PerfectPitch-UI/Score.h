@@ -15,6 +15,7 @@ public:
 	//Score() {};
 	Score(HMIDIOUT devh, int tempo);
 	void PlayMusic();
+	void StopMusic();
 	void NewNote(int RL, int beat, int n1 = 100, int n2 = 100, int n3 = 100, int n4 = 100, int n5 = 100);
 	void NewNote(int RL, linAccord ns);
 	void EmptyNote(int RL, int beat);
@@ -37,4 +38,16 @@ public:
 		for (int i = 0; i < 5; i++)
 			Threads_L[i].setThreadVol(Vol);
 	}
+
+private:
+	thread thr1;
+	thread thr2;
+	thread thr3;
+	thread thr4;
+	thread thr5;
+	thread thr6;
+	thread thr7;
+	thread thr8;
+	thread thr9;
+	thread thr10;
 };

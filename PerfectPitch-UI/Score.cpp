@@ -15,16 +15,16 @@ Score::Score(HMIDIOUT devh, int tempo)
 
 void Score::PlayMusic()
 {
-	thread thr1 = Threads_R[0].PlayThread();
-	thread thr2 = Threads_R[1].PlayThread();
-	thread thr3 = Threads_R[2].PlayThread();
-	thread thr4 = Threads_R[3].PlayThread();
-	thread thr5 = Threads_R[4].PlayThread();
-	thread thr6 = Threads_L[0].PlayThread();
-	thread thr7 = Threads_L[0].PlayThread();
-	thread thr8 = Threads_L[2].PlayThread();
-	thread thr9 = Threads_L[3].PlayThread();
-	thread thr10 = Threads_L[4].PlayThread();
+	thr1 = Threads_R[0].PlayThread();
+	thr2 = Threads_R[1].PlayThread();
+	thr3 = Threads_R[2].PlayThread();
+	thr4 = Threads_R[3].PlayThread();
+	thr5 = Threads_R[4].PlayThread();
+	thr6 = Threads_L[0].PlayThread();
+	thr7 = Threads_L[0].PlayThread();
+	thr8 = Threads_L[2].PlayThread();
+	thr9 = Threads_L[3].PlayThread();
+	thr10 = Threads_L[4].PlayThread();
 
 	thr1.join();
 	thr2.join();
@@ -36,6 +36,10 @@ void Score::PlayMusic()
 	thr8.join();
 	thr9.join();
 	thr10.join();
+
+}
+
+void Score::StopMusic() {
 
 }
 
