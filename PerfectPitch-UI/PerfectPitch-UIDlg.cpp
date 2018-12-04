@@ -614,7 +614,17 @@ UINT MyThreadDetnote(LPVOID pParam) {
 		}
 	}
 	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 완료 )");
-	dialog->SaveImage(image, "tempresult.png");
+	Mat result = LinScores[0].oneline[0];
+	for (int i = 0; i < NumofLinears; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{	
+			if (i == 0 && j == 0) continue;
+			cv::vconcat(result, LinScores[i].oneline[j], result);
+		}
+	}
+
+	dialog->SaveImage(result, "tempresult.png");
 
 	if (NULL != dialog->m_PictureImage)
 	{
