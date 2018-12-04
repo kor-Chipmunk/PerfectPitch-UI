@@ -6,8 +6,8 @@ void Pretreatment::Binarization(cv::Mat& image, uchar threshold)
 	for (int y = 0; y < image.rows; y++) {
 		for (int x = 0; x < image.cols; x++) {
 			if (image.at<cv::Vec3b>(y, x)[0] > threshold
-				|| image.at<cv::Vec3b>(y, x)[1]>threshold
-				|| image.at<cv::Vec3b>(y, x)[2]>threshold) {
+				|| image.at<cv::Vec3b>(y, x)[1] > threshold
+				|| image.at<cv::Vec3b>(y, x)[2] > threshold) {
 				image.at<cv::Vec3b>(y, x)[0] = 255;
 				image.at<cv::Vec3b>(y, x)[1] = 255;
 				image.at<cv::Vec3b>(y, x)[2] = 255;
@@ -97,7 +97,7 @@ void Pretreatment::DetectLine(cv::Mat& image, vector<int>& lineArr)
 				lineArr.push_back(i); //lineArr에 오선 높이들을 push해둠
 				for (int j = 0; j < col; j++)
 				{
-					image.at<cv::Vec3b>(i, j)[1] = 255; //오선 찾으면 초록색으로 바꿈
+					image.at<cv::Vec3b>(i, j)[1] = 200; //오선 찾으면 초록색으로 바꿈
 				}
 			}
 		}
@@ -108,10 +108,10 @@ void Pretreatment::RemoveDup(vector<int>& lineArr) //오선이 두꺼워서 여러 줄일 �
 //ex 1 2 3 6 7 10 11 이 들어있는 경우, 2 7 11 만 남기고 지운다.
 {
 	int size = lineArr.size();
-	for (int i = 0; i < size-1; i++)
+	for (int i = 0; i < size - 1; i++)
 	{
 		int j = i;
-		for (; j < size-1;)
+		for (; j < size - 1;)
 		{
 			if (lineArr[j + 1] - lineArr[j] == 1) //옆칸과 1 차이나면 j이동
 				j++;

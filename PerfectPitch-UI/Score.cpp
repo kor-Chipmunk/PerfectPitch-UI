@@ -15,16 +15,16 @@ Score::Score(HMIDIOUT devh, int tempo)
 
 void Score::PlayMusic()
 {
-	thr1 = Threads_R[0].PlayThread();
-	thr2 = Threads_R[1].PlayThread();
-	thr3 = Threads_R[2].PlayThread();
-	thr4 = Threads_R[3].PlayThread();
-	thr5 = Threads_R[4].PlayThread();
-	thr6 = Threads_L[0].PlayThread();
-	thr7 = Threads_L[0].PlayThread();
-	thr8 = Threads_L[2].PlayThread();
-	thr9 = Threads_L[3].PlayThread();
-	thr10 = Threads_L[4].PlayThread();
+	thread thr1 = Threads_R[0].PlayThread();
+	thread thr2 = Threads_R[1].PlayThread();
+	thread thr3 = Threads_R[2].PlayThread();
+	thread thr4 = Threads_R[3].PlayThread();
+	thread thr5 = Threads_R[4].PlayThread();
+	thread thr6 = Threads_L[0].PlayThread();
+	thread thr7 = Threads_L[0].PlayThread();
+	thread thr8 = Threads_L[2].PlayThread();
+	thread thr9 = Threads_L[3].PlayThread();
+	thread thr10 = Threads_L[4].PlayThread();
 
 	thr1.join();
 	thr2.join();
@@ -39,39 +39,38 @@ void Score::PlayMusic()
 
 }
 
-void Score::StopMusic() {
-
-}
-
 void Score::NewNote(int RL, int beat, int n1, int n2, int n3, int n4, int n5)
 {
-	if (RL == 0) //¿À¸¥¼Õ
+	if (beat != 0)
 	{
-		Threads_R[0].pushNote(n1);
-		Threads_R[1].pushNote(n2);
-		Threads_R[2].pushNote(n3);
-		Threads_R[3].pushNote(n4);
-		Threads_R[4].pushNote(n5);
-		EmptyNote(0,beat - 1);
-	}
-	else if(RL==1)//¿Þ¼Õ
-	{
-		Threads_L[0].pushNote(n1);
-		Threads_L[1].pushNote(n2);
-		Threads_L[2].pushNote(n3);
-		Threads_L[3].pushNote(n4);
-		Threads_L[4].pushNote(n5);
-		EmptyNote(1,beat - 1);
-	}
-	else//ÇÑ¼Õ¾Çº¸_test¿ë
-	{
-		Threads_R[0].pushNote(n1);
-		Threads_R[1].pushNote(n2);
-		Threads_R[2].pushNote(n3);
-		Threads_R[3].pushNote(n4);
-		Threads_R[4].pushNote(n5);
-		EmptyNote(0, beat - 1);
-		EmptyNote(1, beat);
+		if (RL == 0) //¿À¸¥¼Õ
+		{
+			Threads_R[0].pushNote(n1);
+			Threads_R[1].pushNote(n2);
+			Threads_R[2].pushNote(n3);
+			Threads_R[3].pushNote(n4);
+			Threads_R[4].pushNote(n5);
+			EmptyNote(0, beat - 1);
+		}
+		else if (RL == 1)//¿Þ¼Õ
+		{
+			Threads_L[0].pushNote(n1);
+			Threads_L[1].pushNote(n2);
+			Threads_L[2].pushNote(n3);
+			Threads_L[3].pushNote(n4);
+			Threads_L[4].pushNote(n5);
+			EmptyNote(1, beat - 1);
+		}
+		else//ÇÑ¼Õ¾Çº¸_test¿ë
+		{
+			Threads_R[0].pushNote(n1);
+			Threads_R[1].pushNote(n2);
+			Threads_R[2].pushNote(n3);
+			Threads_R[3].pushNote(n4);
+			Threads_R[4].pushNote(n5);
+			EmptyNote(0, beat - 1);
+			EmptyNote(1, beat);
+		}
 	}
 }
 void Score::NewNote(int RL, linAccord ns)
@@ -80,7 +79,7 @@ void Score::NewNote(int RL, linAccord ns)
 	{
 		for (int i = 0; i < ns.tempN.size(); i++)
 		{
-			Threads_R[i].pushNote(ns.tempN[i].y);
+			Threads_R[i].pushNote(ns.tempN[i].pitch);
 		}
 		for (int i = ns.tempN.size(); i < 5; i++)
 		{
@@ -92,7 +91,7 @@ void Score::NewNote(int RL, linAccord ns)
 	{
 		for (int i = 0; i < ns.tempN.size(); i++)
 		{
-			Threads_L[i].pushNote(ns.tempN[i].y);
+			Threads_L[i].pushNote(ns.tempN[i].pitch);
 		}
 		for (int i = ns.tempN.size(); i < 5; i++)
 		{
@@ -104,7 +103,7 @@ void Score::NewNote(int RL, linAccord ns)
 	{
 		for (int i = 0; i < ns.tempN.size(); i++)
 		{
-			Threads_R[i].pushNote(ns.tempN[i].y);
+			Threads_R[i].pushNote(ns.tempN[i].pitch);
 		}
 		for (int i = ns.tempN.size(); i < 5; i++)
 		{
@@ -117,26 +116,29 @@ void Score::NewNote(int RL, linAccord ns)
 
 void Score::EmptyNote(int RL, int beat)
 {
-	if (RL==1) //¿Þ¼Õ
+	if (beat != 0)
 	{
-		for (int i = 0; i < beat; i++)
+		if (RL == 1) //¿Þ¼Õ
 		{
-			Threads_L[0].pushNote(100);
-			Threads_L[1].pushNote(100);
-			Threads_L[2].pushNote(100);
-			Threads_L[3].pushNote(100);
-			Threads_L[4].pushNote(100);
+			for (int i = 0; i < beat; i++)
+			{
+				Threads_L[0].pushNote(100);
+				Threads_L[1].pushNote(100);
+				Threads_L[2].pushNote(100);
+				Threads_L[3].pushNote(100);
+				Threads_L[4].pushNote(100);
+			}
 		}
-	}
-	else if(RL==0) //¿À¸¥¼Õ
-	{
-		for (int i = 0; i < beat; i++)
+		else if (RL == 0) //¿À¸¥¼Õ
 		{
-			Threads_R[0].pushNote(100);
-			Threads_R[1].pushNote(100);
-			Threads_R[2].pushNote(100);
-			Threads_R[3].pushNote(100);
-			Threads_R[4].pushNote(100);
+			for (int i = 0; i < beat; i++)
+			{
+				Threads_R[0].pushNote(100);
+				Threads_R[1].pushNote(100);
+				Threads_R[2].pushNote(100);
+				Threads_R[3].pushNote(100);
+				Threads_R[4].pushNote(100);
+			}
 		}
 	}
 }

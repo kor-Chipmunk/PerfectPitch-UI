@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include"opencv2/opencv.hpp"
 using namespace std;
 
 
@@ -8,12 +9,14 @@ class TempNotes
 public:
 	int x;
 	int y;
+	int pitch;
 	int beat;
 
-	TempNotes(int x, int y, int beat)
+	TempNotes(int x, int y, int pitch, int beat)
 	{
-		this->x = x;
 		this->y = y;
+		this->x = x;
+		this->pitch = pitch;
 		this->beat = beat;
 	}
 };
@@ -23,8 +26,8 @@ class linAccord
 public:
 	vector<TempNotes> tempN;
 	int XofAccord;
-	int beat=0;
-	
+	int beat = 0;
+
 	linAccord(int XofAccord)
 	{
 		this->XofAccord = XofAccord;
@@ -43,6 +46,6 @@ class Accords
 {
 public:
 	vector<linAccord> Accord;
-	void pushlinAccord(TempNotes n, int x);
+	void pushlinAccord(cv::Mat& image, TempNotes n, int x, int Wofhead, int Hofhead);
 };
 
