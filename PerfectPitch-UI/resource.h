@@ -14,8 +14,6 @@
 #define IDC_BTN_DETNOTE                 1004
 #define IDC_BTN_REMDUP                  1005
 #define IDC_BTN_PLAY                    1006
-#define IDC_BTN_STOP                    1007
-#define IDC_BTN_REMDUP2                 1008
 #define IDC_BTN_CUT                     1008
 
 // Next default values for new objects

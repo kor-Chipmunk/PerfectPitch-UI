@@ -21,7 +21,7 @@ void Score::PlayMusic()
 	thread thr4 = Threads_R[3].PlayThread();
 	thread thr5 = Threads_R[4].PlayThread();
 	thread thr6 = Threads_L[0].PlayThread();
-	thread thr7 = Threads_L[0].PlayThread();
+	thread thr7 = Threads_L[1].PlayThread();
 	thread thr8 = Threads_L[2].PlayThread();
 	thread thr9 = Threads_L[3].PlayThread();
 	thread thr10 = Threads_L[4].PlayThread();
@@ -36,7 +36,6 @@ void Score::PlayMusic()
 	thr8.join();
 	thr9.join();
 	thr10.join();
-
 }
 
 void Score::NewNote(int RL, int beat, int n1, int n2, int n3, int n4, int n5)

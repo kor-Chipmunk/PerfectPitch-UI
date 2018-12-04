@@ -70,6 +70,8 @@ public:
 	afx_msg void OnBnClickedBtnPlay();
 	afx_msg void OnBnClickedBtnStop();
 	
+	CButton btnHalt;
+	afx_msg void OnBnClickedBtnHalt();
 };
 
 UINT MyThreadBin(LPVOID pParam);

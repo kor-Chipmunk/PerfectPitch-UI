@@ -96,8 +96,6 @@ void CPerfectPitchUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_CUT, btnCut);
 	DDX_Control(pDX, IDC_BTN_DETNOTE, btnDetNote);
 	DDX_Control(pDX, IDC_BTN_PLAY, btnPlay);
-	DDX_Control(pDX, IDC_BTN_STOP, btnStop);
-	DDX_Control(pDX, IDC_BTN_CUT, btnCut);
 }
 
 BEGIN_MESSAGE_MAP(CPerfectPitchUIDlg, CDialogEx)
@@ -111,7 +109,6 @@ BEGIN_MESSAGE_MAP(CPerfectPitchUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_REMDUP, &CPerfectPitchUIDlg::OnBnClickedBtnRemdup)
 	ON_BN_CLICKED(IDC_BTN_DETNOTE, &CPerfectPitchUIDlg::OnBnClickedBtnDetnote)
 	ON_BN_CLICKED(IDC_BTN_PLAY, &CPerfectPitchUIDlg::OnBnClickedBtnPlay)
-	ON_BN_CLICKED(IDC_BTN_STOP, &CPerfectPitchUIDlg::OnBnClickedBtnStop)
 END_MESSAGE_MAP()
 
 
@@ -160,8 +157,6 @@ BOOL CPerfectPitchUIDlg::OnInitDialog()
 	GetDlgItem(IDC_BTN_DETNOTE)->EnableWindow(FALSE);
 	CPerfectPitchUIDlg::btnPlay.EnableWindow(FALSE);
 	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
-	CPerfectPitchUIDlg::btnStop.EnableWindow(FALSE);
-	GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -359,8 +354,6 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 	GetDlgItem(IDC_BTN_DETNOTE)->EnableWindow(FALSE);
 	CPerfectPitchUIDlg::btnPlay.EnableWindow(FALSE);
 	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
-	CPerfectPitchUIDlg::btnStop.EnableWindow(FALSE);
-	GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
 
 	
 	//cstring을 string으로 변환
@@ -835,30 +828,24 @@ UINT MyThreadDetnote(LPVOID pParam) {
 void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
 {
 	AfxBeginThread(MyThreadProc, this);
-	CPerfectPitchUIDlg::btnStop.EnableWindow(TRUE);
-	GetDlgItem(IDC_BTN_STOP)->EnableWindow(TRUE);
+	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
 }
 
 UINT MyThreadProc(LPVOID pParam) {
 	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
 
+	CString str;
+	dialog->btnPlay.GetWindowTextA(str);
+	if (str.Compare(""))
 	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Currently Playing Music... )");
+
 	FinalScore.setTempo(90); //디폴트는 150, 버튼으로 템포 지정 가능하면 좋음. 75하면 두배빨라짐
 	FinalScore.setVolume_R(100);
 	FinalScore.setVolume_L(80);
 	FinalScore.PlayMusic();
 	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Playing Music )");
 
+	dialog->btnPlay.EnableWindow(TRUE);
+
 	return 0;
-}
-
-
-void CPerfectPitchUIDlg::OnBnClickedBtnStop()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	SetWindowText("Perfect Pitch - ( Stopped Playing )");
-	myMusic.setVolume_L(0);
-	myMusic.setVolume_R(0);
-	CPerfectPitchUIDlg::btnPlay.EnableWindow(TRUE);
-	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(TRUE);
 }
