@@ -349,7 +349,18 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 	}
 	/////////////미디 생성 및 설정//////////////////////////////
 
-	
+	CPerfectPitchUIDlg::btnDetLine.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_DETLINE)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnRemDup.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_REMDUP)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnCut.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_CUT)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnDetNote.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_DETNOTE)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnPlay.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnStop.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
 
 	
 	//cstring을 string으로 변환
