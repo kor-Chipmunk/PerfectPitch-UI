@@ -57,6 +57,7 @@ public:
 	CButton btnBin;
 	CButton btnDetLine;
 	CButton btnRemDup;
+	CButton btnCut;
 	CButton btnDetNote;
 	CButton btnPlay;
 	CButton btnStop;
@@ -68,6 +69,7 @@ public:
 	afx_msg void OnBnClickedBtnDetnote();
 	afx_msg void OnBnClickedBtnPlay();
 	afx_msg void OnBnClickedBtnStop();
+	
 };
 
 UINT MyThreadBin(LPVOID pParam);

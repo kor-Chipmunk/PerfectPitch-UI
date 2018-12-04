@@ -93,9 +93,11 @@ void CPerfectPitchUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_BIN, btnBin);
 	DDX_Control(pDX, IDC_BTN_DETLINE, btnDetLine);
 	DDX_Control(pDX, IDC_BTN_REMDUP, btnRemDup);
+	DDX_Control(pDX, IDC_BTN_CUT, btnCut);
 	DDX_Control(pDX, IDC_BTN_DETNOTE, btnDetNote);
 	DDX_Control(pDX, IDC_BTN_PLAY, btnPlay);
 	DDX_Control(pDX, IDC_BTN_STOP, btnStop);
+	DDX_Control(pDX, IDC_BTN_CUT, btnCut);
 }
 
 BEGIN_MESSAGE_MAP(CPerfectPitchUIDlg, CDialogEx)
@@ -145,6 +147,21 @@ BOOL CPerfectPitchUIDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+
+	CPerfectPitchUIDlg::btnBin.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_BIN)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnDetLine.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_DETLINE)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnRemDup.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_REMDUP)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnCut.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_CUT)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnDetNote.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_DETNOTE)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnPlay.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
+	CPerfectPitchUIDlg::btnStop.EnableWindow(FALSE);
+	GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -343,6 +360,8 @@ void CPerfectPitchUIDlg::OnBnClickedBtnLoad()
 	//image = cv::imread("score_oneline.jpg", CV_LOAD_IMAGE_COLOR);
 	//image = cv::imread("score.jpg", CV_LOAD_IMAGE_COLOR);
 
+	CPerfectPitchUIDlg::btnBin.EnableWindow(TRUE);
+	GetDlgItem(IDC_BTN_BIN)->EnableWindow(TRUE);
 
 
 }
@@ -370,16 +389,18 @@ void CPerfectPitchUIDlg::SaveImage(Mat targetMat, CString filePath)
 void CPerfectPitchUIDlg::OnBnClickedBtnBin()
 {
 	AfxBeginThread(MyThreadBin, this);
+	
+	
 }
 
 UINT MyThreadBin(LPVOID pParam) {
 	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
 
 	// 이진화 버튼 클릭시
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 중... )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Processing Binarization... )");
 	Pretreatment::Binarization(image, 200);
 	dialog->SaveImage(image, "tempresult.png");
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 이진화 완료 )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Binarization Finished )");
 
 	if (NULL != dialog->m_PictureImage)
 	{
@@ -407,6 +428,8 @@ UINT MyThreadBin(LPVOID pParam) {
 			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
 
 		}
+		dialog->btnDetLine.EnableWindow(TRUE);
+		dialog->GetDlgItem(IDC_BTN_DETLINE)->EnableWindow(TRUE);
 
 	}
 
@@ -416,9 +439,9 @@ UINT MyThreadBin(LPVOID pParam) {
 void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 {
 	// 오선 검출
-	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 중... )");
+	SetWindowText("Perfect Pitch - ( Detecting 5 Line... )");
 	Pretreatment::DetectLine(image, lineArr);
-	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 검출 완료 )");	
+	SetWindowText("Perfect Pitch - ( Finished Detecting 5 Line )");	
 	SaveImage(image, "tempresult.png");
 
 	if (NULL != m_PictureImage)
@@ -447,6 +470,9 @@ void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
 
 		}
+
+		CPerfectPitchUIDlg::btnRemDup.EnableWindow(TRUE);
+		GetDlgItem(IDC_BTN_REMDUP)->EnableWindow(TRUE);
 
 	}
 }
@@ -454,9 +480,9 @@ void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
 {
 	// 오선 픽셀 정리.
-	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리하는 중... )");
+	SetWindowText("Perfect Pitch( Removing Duplicates  ... )");
 	Pretreatment::RemoveDup(lineArr);
-	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 오선 정리 완료 )");
+	SetWindowText("Perfect Pitch - ( Finished Removing Duplicates )");
 	SaveImage(image, "tempresult.png");
 
 	if (NULL != m_PictureImage)
@@ -485,6 +511,9 @@ void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
 			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
 
 		}
+
+		CPerfectPitchUIDlg::btnCut.EnableWindow(TRUE);
+		GetDlgItem(IDC_BTN_CUT)->EnableWindow(TRUE);
 
 	}
 	return;
@@ -500,7 +529,7 @@ UINT MyThreadCut(LPVOID pParam) {
 	//악보 자르기
 	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
 
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Cutting Music Sheet ... )");
 	while (!EoI)
 	{
 		linearScore temp0(image, lineArr, EoI);
@@ -508,7 +537,7 @@ UINT MyThreadCut(LPVOID pParam) {
 		NumofLinears++;
 
 		char* text = new char[100];
-		sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 악보 자르는 중... %d개 완료 )", NumofLinears);
+		sprintf(text, "Perfect Pitch - ( Cutting Music Sheet... # %d done )", NumofLinears);
 		SetWindowText(dialog->m_hWnd, text);
 	}
 
@@ -540,7 +569,7 @@ UINT MyThreadCut(LPVOID pParam) {
 		SetWindowText(dialog->m_hWnd, text);
 	}
 
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 자르기 완료 )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Cutting Music Sheet )");
 
 	
 	Mat result = LinScores[0].oneline[0];
@@ -581,6 +610,8 @@ UINT MyThreadCut(LPVOID pParam) {
 			//SetPNGReSizeDraw(ScoreImage.GetDC()->m_hDC, m_PictureImage, StaticPictureRect);
 
 		}
+		dialog->btnDetNote.EnableWindow(TRUE);
+		dialog->GetDlgItem(IDC_BTN_DETNOTE)->EnableWindow(TRUE);
 
 	}
 
@@ -599,7 +630,7 @@ UINT MyThreadDetnote(LPVOID pParam) {
 	Midi::AllChannelSoundOff(m_DevHandle);
 	Midi::SendShortMsg(m_DevHandle, 0xB0, 7, 127);
 
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 중... )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Detecting Music Notes... )");
 	//////////////////////////////악보 처리///////////////////////////////
 
 	std::cout << "악보 처리 시작" << endl;
@@ -608,7 +639,7 @@ UINT MyThreadDetnote(LPVOID pParam) {
 		for (int RL = 0; RL < 2; RL++)
 		{
 			char* text = new char[100];
-			sprintf(text, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 중... %d번 악보 / %d개 )", i * 2 + RL + 1, NumofLinears * 2);
+			sprintf(text, "Perfect Pitch - ( Detecting Music Notes... %d번 악보 / %d개 )", i * 2 + RL + 1, NumofLinears * 2);
 			SetWindowText(dialog->m_hWnd, text);
 			ScoreProcessor myProc(LinScores[i].oneline[RL], &myMusic, lines5[i][RL], LUT_original, RL);
 			if (RL == 0)
@@ -743,7 +774,7 @@ UINT MyThreadDetnote(LPVOID pParam) {
 
 	std::cout << "악보 처리 완료" << endl;
 
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 음표 검출 완료 )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Detecting Music Notes )");
 	Mat result = LinScores[0].oneline[0];
 	for (int i = 0; i < NumofLinears; i++)
 	{
@@ -784,6 +815,8 @@ UINT MyThreadDetnote(LPVOID pParam) {
 		}
 
 	}
+	dialog->btnPlay.EnableWindow(TRUE);
+	dialog->GetDlgItem(IDC_BTN_PLAY)->EnableWindow(TRUE);
 
 	return 0;
 }
@@ -791,17 +824,19 @@ UINT MyThreadDetnote(LPVOID pParam) {
 void CPerfectPitchUIDlg::OnBnClickedBtnPlay()
 {
 	AfxBeginThread(MyThreadProc, this);
+	CPerfectPitchUIDlg::btnStop.EnableWindow(TRUE);
+	GetDlgItem(IDC_BTN_STOP)->EnableWindow(TRUE);
 }
 
 UINT MyThreadProc(LPVOID pParam) {
 	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
 
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 연주 중... )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Currently Playing Music... )");
 	FinalScore.setTempo(90); //디폴트는 150, 버튼으로 템포 지정 가능하면 좋음. 75하면 두배빨라짐
 	FinalScore.setVolume_R(100);
 	FinalScore.setVolume_L(80);
 	FinalScore.PlayMusic();
-	SetWindowText(dialog->m_hWnd, "퍼펙트피치 - 영상처리 과제 ( 악보 연주  완료 )");
+	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Playing Music )");
 
 	return 0;
 }
@@ -810,7 +845,9 @@ UINT MyThreadProc(LPVOID pParam) {
 void CPerfectPitchUIDlg::OnBnClickedBtnStop()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	SetWindowText("퍼펙트피치 - 영상처리 과제 ( 악보 재생 멈춤 )");
+	SetWindowText("Perfect Pitch - ( Stopped Playing )");
 	myMusic.setVolume_L(0);
 	myMusic.setVolume_R(0);
+	CPerfectPitchUIDlg::btnPlay.EnableWindow(TRUE);
+	GetDlgItem(IDC_BTN_PLAY)->EnableWindow(TRUE);
 }
