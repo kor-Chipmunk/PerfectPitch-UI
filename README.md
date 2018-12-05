@@ -2,7 +2,7 @@
   
 # PerfectPitch
 ## Screenshots
-![Screenshot](https://raw.githubusercontent.com/kor-Chipmunk/PerfectPitch-UI/master/image/image1.png)
+![Screenshot](https://raw.githubusercontent.com/kor-Chipmunk/PerfectPitch-UI/master/image/image1.PNG)
  
 ## Creator
 1. [kor-Chipmunk](https://github.com/kor-Chipmunk)
