@@ -1,8 +1,8 @@
-![Logo](https://raw.githubusercontent.com/kor-Chipmunk/master/image/logo.png)  
+![Logo](https://raw.githubusercontent.com/kor-Chipmunk/PerfectPitch-UI/master/image/logo.png)  
   
 # PerfectPitch
 ## Screenshots
-![Screenshot](https://raw.githubusercontent.com/kor-Chipmunk/master/image/image1.png)
+![Screenshot](https://raw.githubusercontent.com/kor-Chipmunk/PerfectPitch-UI/master/image/image1.png)
  
 ## Creator
 1. [kor-Chipmunk](https://github.com/kor-Chipmunk)
