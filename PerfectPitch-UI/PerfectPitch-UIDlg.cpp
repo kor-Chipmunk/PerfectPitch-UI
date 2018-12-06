@@ -11,7 +11,7 @@
 #define new DEBUG_NEW
 #endif
 
-#include "stdafx.h"
+#include <chrono>
 
 #pragma comment(lib,"winmm.lib")
 
@@ -394,7 +394,7 @@ void CPerfectPitchUIDlg::OnBnClickedBtnBin()
 {
 	AfxBeginThread(MyThreadBin, this);
 	
-	
+
 }
 
 UINT MyThreadBin(LPVOID pParam) {
@@ -402,9 +402,17 @@ UINT MyThreadBin(LPVOID pParam) {
 
 	// 이진화 버튼 클릭시
 	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Processing Binarization... )");
+	auto begin = chrono::high_resolution_clock::now();
 	Pretreatment::Binarization(image, 200);
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
+
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - ( Binarization Finished, %f sec )", s);
+	SetWindowText(dialog->m_hWnd, sec);
+
 	dialog->SaveImage(image, "tempresult.png");
-	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Binarization Finished )");
 
 	if (NULL != dialog->m_PictureImage)
 	{
@@ -444,8 +452,16 @@ void CPerfectPitchUIDlg::OnBnClickedBtnDetline()
 {
 	// 오선 검출
 	SetWindowText("Perfect Pitch - ( Detecting 5 Line... )");
+	auto begin = chrono::high_resolution_clock::now();
 	Pretreatment::DetectLine(image, lineArr);
-	SetWindowText("Perfect Pitch - ( Finished Detecting 5 Line )");	
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
+
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - ( Finished Detecting 5 Line, %f sec )", s);
+	SetWindowText(sec);
+
 	SaveImage(image, "tempresult.png");
 
 	if (NULL != m_PictureImage)
@@ -485,8 +501,16 @@ void CPerfectPitchUIDlg::OnBnClickedBtnRemdup()
 {
 	// 오선 픽셀 정리.
 	SetWindowText("Perfect Pitch( Removing Duplicates  ... )");
+	auto begin = chrono::high_resolution_clock::now();
 	Pretreatment::RemoveDup(lineArr);
-	SetWindowText("Perfect Pitch - ( Finished Removing Duplicates )");
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
+
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - ( Finished Removing Duplicates, %f sec )", s);
+	SetWindowText(sec);
+
 	SaveImage(image, "tempresult.png");
 
 	if (NULL != m_PictureImage)
@@ -534,6 +558,7 @@ UINT MyThreadCut(LPVOID pParam) {
 	CPerfectPitchUIDlg* dialog = (CPerfectPitchUIDlg*)pParam;
 
 	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Cutting Music Sheet ... )");
+	auto begin = chrono::high_resolution_clock::now();
 	while (!EoI)
 	{
 		linearScore temp0(image, lineArr, EoI);
@@ -573,8 +598,13 @@ UINT MyThreadCut(LPVOID pParam) {
 		SetWindowText(dialog->m_hWnd, text);
 	}
 
-	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Cutting Music Sheet )");
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
 
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - ( Finished Cutting Music Sheet, %f sec )", s);
+	SetWindowText(dialog->m_hWnd, sec);
 	
 	Mat result = LinScores[0].oneline[0];
 	for (int i = 0; i < NumofLinears; i++)
@@ -638,6 +668,7 @@ UINT MyThreadDetnote(LPVOID pParam) {
 	//////////////////////////////악보 처리///////////////////////////////
 
 	std::cout << "악보 처리 시작" << endl;
+	auto begin = chrono::high_resolution_clock::now();
 	for (int i = 0; i < NumofLinears; i++)
 	{
 		for (int RL = 0; RL < 2; RL++)
@@ -778,7 +809,14 @@ UINT MyThreadDetnote(LPVOID pParam) {
 
 	std::cout << "악보 처리 완료" << endl;
 
-	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Detecting Music Notes )");
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
+
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - ( Finished Detecting Music Notes, %f sec )", s);
+	SetWindowText(dialog->m_hWnd, sec);
+
 	Mat result = LinScores[0].oneline[0];
 	for (int i = 0; i < NumofLinears; i++)
 	{
@@ -838,12 +876,20 @@ UINT MyThreadProc(LPVOID pParam) {
 	dialog->btnPlay.GetWindowTextA(str);
 	if (str.Compare(""))
 	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Currently Playing Music... )");
+	auto begin = chrono::high_resolution_clock::now();
 
 	FinalScore.setTempo(90); //디폴트는 150, 버튼으로 템포 지정 가능하면 좋음. 75하면 두배빨라짐
 	FinalScore.setVolume_R(100);
 	FinalScore.setVolume_L(80);
 	FinalScore.PlayMusic();
-	SetWindowText(dialog->m_hWnd, "Perfect Pitch - ( Finished Playing Music )");
+
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto s = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() / 1000.0;
+
+	char sec[100];
+	sprintf(sec, "Perfect Pitch - (Finished Playing Music, %f sec )", s);
+	SetWindowText(dialog->m_hWnd, sec);
 
 	dialog->btnPlay.EnableWindow(TRUE);
 
