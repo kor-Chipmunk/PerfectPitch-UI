@@ -674,7 +674,7 @@ UINT MyThreadDetnote(LPVOID pParam) {
 		for (int RL = 0; RL < 2; RL++)
 		{
 			char* text = new char[100];
-			sprintf(text, "Perfect Pitch - ( Detecting Music Notes... %d번 악보 / %d개 )", i * 2 + RL + 1, NumofLinears * 2);
+			sprintf(text, "Perfect Pitch - ( Detecting Music Notes... # %d done / %d )", i * 2 + RL + 1, NumofLinears * 2);
 			SetWindowText(dialog->m_hWnd, text);
 			ScoreProcessor myProc(LinScores[i].oneline[RL], &myMusic, lines5[i][RL], LUT_original, RL);
 			if (RL == 0)
