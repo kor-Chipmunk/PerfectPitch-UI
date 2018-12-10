@@ -1,9 +1,9 @@
 ![Logo](https://raw.githubusercontent.com/kor-Chipmunk/PerfectPitch-UI/master/image/logo.png)  
   
-# PerfectPitch
+# 🎵 PerfectPitch 🎶
 PerfectPitch is based on Digital Image Processing at Chung-Ang University (2018 Fall Semester).  
 The PerfectPitch program plays a music, recognized from a music score.  
-The PerfectPitch has following features
+The PerfectPitch has following features.
   
 ## Features
 1. Load a music sheet image file
