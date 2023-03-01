@@ -22,6 +22,6 @@ The PerfectPitch has following features.
   
 ## Creator
 1. [kor-Chipmunk](https://github.com/kor-Chipmunk)
-2. [Jiseon Sim](https://github.com/carolsim)
+2. [Jiseon Sim](https://github.com/superjisonic)
 3. Jiho Lee
 4. JeUng Song
